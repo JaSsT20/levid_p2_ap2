@@ -6,7 +6,7 @@ data class GastoDto(
     @Json(name = "idGasto")
     val id: Int,
     val fecha: String,
-    val suplidor: String,
+    val suplidor: String?,
     val concepto: String,
     val ncf: String,
     val itbis: Int,
