@@ -10,7 +10,7 @@ data class GastoDto(
     val suplidor: String? = null,
     val concepto: String,
     val descuento: Int = 0,
-    val ncf: String,
+    val ncf: String?,
     val itbis: Int,
     val monto: Int
 )
