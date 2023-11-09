@@ -220,11 +220,14 @@ fun ItemGasto(gasto: GastoDto){
             ) {
                 TextButton(
                     onClick = { /*TODO*/ },
-                    colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colorScheme.error)
                 ) {
-                    Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete icon")
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Delete icon",
+                        tint = MaterialTheme.colorScheme.error
+                    )
                     Spacer(modifier = Modifier.padding(horizontal = 3.dp))
-                    Text(text = "Eliminar")
+                    Text(text = "Eliminar", color = MaterialTheme.colorScheme.error)
                 }
             }
         }
