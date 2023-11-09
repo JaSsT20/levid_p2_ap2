@@ -40,23 +40,25 @@ class GastosRepository @Inject constructor(
         }
     }
 
-    suspend fun postGasto(gasto: GastoDto): Flow<Resource<GastoDto>> = flow {
-        try {
-            emit(Resource.Loading())
+    suspend fun postGasto(gasto: GastoDto) = gastosApi.postGasto(gasto)
 
-            val gasto = gastosApi.postGasto(gasto)
-
-            if (gasto.isSuccessful) {
-                emit(Resource.Success(gasto.body()!!))
-            } else {
-                emit(Resource.Error(gasto.message()))
-            }
-        } catch (e: HttpException) {
-            emit(Resource.Error(e.message ?: "Error HTTP"))
-        } catch (e: IOException) {
-            emit(Resource.Error(e.message ?: "No internet"))
-        }
-    }
+//    suspend fun postGasto(gasto: GastoDto): Flow<Resource<GastoDto>> = flow {
+//        try {
+//            emit(Resource.Loading())
+//
+//            val gasto = gastosApi.postGasto(gasto)
+//
+//            if (gasto.isSuccessful) {
+//                emit(Resource.Success(gasto.body()!!))
+//            } else {
+//                emit(Resource.Error(gasto.message()))
+//            }
+//        } catch (e: HttpException) {
+//            emit(Resource.Error(e.message ?: "Error HTTP"))
+//        } catch (e: IOException) {
+//            emit(Resource.Error(e.message ?: "No internet"))
+//        }
+//    }
 
     //TODO PutGasto
 }
