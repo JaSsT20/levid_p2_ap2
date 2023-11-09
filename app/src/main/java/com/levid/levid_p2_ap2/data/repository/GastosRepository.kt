@@ -41,6 +41,7 @@ class GastosRepository @Inject constructor(
     }
 
     suspend fun postGasto(gasto: GastoDto) = gastosApi.postGasto(gasto)
+    suspend fun deleteGasto(id: Int) = gastosApi.deleteGasto(id)
 
 //    suspend fun postGasto(gasto: GastoDto): Flow<Resource<GastoDto>> = flow {
 //        try {
