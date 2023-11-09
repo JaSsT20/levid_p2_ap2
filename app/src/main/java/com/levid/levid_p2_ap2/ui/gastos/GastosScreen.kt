@@ -34,7 +34,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.levid.levid_p2_ap2.data.remote.dtos.GastoDto
 
 @Composable
@@ -80,8 +79,8 @@ fun SaveButton(viewModel: GastosViewModel) {
 @Composable
 fun SuplidorTextField(viewModel: GastosViewModel){
     OutlinedTextField(
-        value = viewModel.suplidor,
-        onValueChange = { viewModel.suplidor = it},
+        value = viewModel.idSuplidor.toString(),
+        onValueChange = { viewModel.idSuplidor = it.toIntOrNull() ?: 0},
         label = { Text(text = "Suplidor")}
     )
 }
@@ -167,7 +166,8 @@ fun ItemGasto(gasto: GastoDto){
         Row(
             modifier = Modifier.padding(8.dp)
         ){
-            Text(text = gasto.suplidor!!)
+            Text(text = "${gasto.suplidor}")
+
         }
         Row(
             modifier = Modifier.padding(8.dp)
