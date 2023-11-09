@@ -24,6 +24,7 @@ class GastosViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(GastosListState())
     val uiState: StateFlow<GastosListState> = _uiState.asStateFlow()
 
+    val id by mutableIntStateOf(0)
     var idSuplidor by mutableIntStateOf(0)
     var fecha by mutableStateOf("")
     var concepto by mutableStateOf("")
@@ -45,6 +46,11 @@ class GastosViewModel @Inject constructor(
             )
         }
         limpiar()
+    }
+    fun delete(id: Int) {
+        viewModelScope.launch {
+            gastosRepository.deleteGasto(id)
+        }
     }
     fun limpiar(){
         fecha = ""

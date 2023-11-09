@@ -16,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -47,7 +46,7 @@ fun GastosScreen(
     ) {
         val state = viewModel.uiState.collectAsStateWithLifecycle()
         Form(viewModel)
-        GastosList(state.value.gastos)
+        GastosList(state.value.gastos, viewModel)
     }
 }
 
@@ -132,16 +131,16 @@ fun MontoTextField(viewModel: GastosViewModel){
     )
 }
 @Composable
-fun GastosList(gastos: List<GastoDto>) {
+fun GastosList(gastos: List<GastoDto>, viewModel: GastosViewModel) {
     LazyColumn{
         items(gastos){ gasto ->
-            ItemGasto(gasto = gasto)
+            ItemGasto(gasto = gasto, viewModel = viewModel)
         }
     }
 }
 
 @Composable
-fun ItemGasto(gasto: GastoDto){
+fun ItemGasto(gasto: GastoDto, viewModel: GastosViewModel){
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -219,7 +218,7 @@ fun ItemGasto(gasto: GastoDto){
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { viewModel.delete(gasto.id) },
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
