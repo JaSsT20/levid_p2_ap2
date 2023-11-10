@@ -32,25 +32,34 @@ class GastosViewModel @Inject constructor(
     var itbis by mutableIntStateOf(0)
     var monto by mutableIntStateOf(0)
 
+    //Error msg
+    var msgIdSuplidor by mutableStateOf("")
+    var msgFecha by mutableStateOf("")
+    var msgConcepto by mutableStateOf("")
+    var msgNcf by mutableStateOf("")
+    var msgItbis by mutableStateOf("")
+    var msgMonto by mutableStateOf("")
+
     private var gastoModificar: GastoDto? = null
 
     fun guardar(){
-        viewModelScope.launch {
-            try{
-                if(gastoModificar != null){
-                    modificar()
-                }
-                else{
-                    insertar()
-                }
+        if(validar()){
+            viewModelScope.launch {
+                try{
+                    if(gastoModificar != null){
+                        modificar()
+                    }
+                    else{
+                        insertar()
+                    }
 
-            }catch (ex: Exception){
-                _uiState.update { it.copy(error = ex.message ?: "Error") }
+                }catch (ex: Exception){
+                    _uiState.update { it.copy(error = ex.message ?: "Error") }
+                }
             }
-            insertar()
+            limpiar()
+            cargarDatos()
         }
-        limpiar()
-        cargarDatos()
     }
     fun modificar(){
         viewModelScope.launch {
@@ -73,7 +82,6 @@ class GastosViewModel @Inject constructor(
     }
     fun modificarGasto(gasto: GastoDto) {
         gastoModificar = gasto
-        // Rellena los inputs con los datos del gasto
         fecha = gasto.fecha
         idSuplidor = gasto.idSuplidor
         concepto = gasto.concepto
@@ -85,6 +93,7 @@ class GastosViewModel @Inject constructor(
         viewModelScope.launch {
             gastosRepository.deleteGasto(id)
         }
+        cargarDatos()
     }
     fun limpiar(){
         fecha = ""
@@ -93,6 +102,38 @@ class GastosViewModel @Inject constructor(
         ncf = ""
         itbis = 0
         monto = 0
+    }
+    fun validar(): Boolean {
+        if(idSuplidor <= 0){
+            msgIdSuplidor = "El id no puede ser menor o igual a cero."
+            return false
+        }
+        else if(fecha.isBlank()){
+            msgFecha = "Debe colocar una fecha [yyyy-MM-dd]."
+            return false
+        }
+        else if(concepto.isBlank()){
+            msgConcepto = "Debe colocar un concepto."
+            return false
+        }
+        else if(ncf.isBlank()){
+            msgNcf = "Debe colocar un NCF"
+            return false
+        }
+        else if(ncf.length < 11){
+            msgNcf = "El máximo y mínimo de este es de 11 dígitos."
+            return false
+        }
+        else if(itbis < 0){
+            msgItbis = "El ITBIS debe ser mayor o igual a cero."
+            return false
+        }
+        else if(monto <= 0){
+            msgMonto = "El monto debe ser mayor que cero."
+            return false
+        }
+        else
+            return true
     }
     fun cargarDatos(){
         viewModelScope.launch {

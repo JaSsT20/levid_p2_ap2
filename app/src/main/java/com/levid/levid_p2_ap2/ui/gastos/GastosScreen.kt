@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
 package com.levid.levid_p2_ap2.ui.gastos
 
@@ -16,6 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -53,7 +55,10 @@ fun GastosScreen(
 @Composable
 fun Form(viewModel: GastosViewModel) {
     Column(
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SuplidorTextField(viewModel = viewModel)
         FechaTextField(viewModel = viewModel)
@@ -67,7 +72,10 @@ fun Form(viewModel: GastosViewModel) {
 
 @Composable
 fun SaveButton(viewModel: GastosViewModel) {
-    OutlinedButton(onClick = { viewModel.guardar()}) {
+    OutlinedButton(
+        onClick = { viewModel.guardar()},
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = "Add icon")
         Spacer(modifier = Modifier.padding(horizontal = 3.dp))
         Text(text = "Guardar")
@@ -78,37 +86,54 @@ fun SaveButton(viewModel: GastosViewModel) {
 @Composable
 fun SuplidorTextField(viewModel: GastosViewModel){
     OutlinedTextField(
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         value = viewModel.idSuplidor.toString(),
-        onValueChange = { viewModel.idSuplidor = it.toIntOrNull() ?: 0},
+        onValueChange = {
+                viewModel.idSuplidor = it.toIntOrNull() ?: 0
+                viewModel.msgIdSuplidor = ""
+        },
         label = { Text(text = "Suplidor")}
     )
+    Text(text = viewModel.msgIdSuplidor, color = MaterialTheme.colorScheme.error)
 }
 
 @Composable
 fun FechaTextField(viewModel: GastosViewModel){
     OutlinedTextField(
         value = viewModel.fecha,
-        onValueChange = { viewModel.fecha = it},
+        onValueChange = {
+            viewModel.fecha = it
+            viewModel.msgFecha = ""
+        },
         label = { Text(text = "Fecha")}
     )
+    Text(text = viewModel.msgFecha, color = MaterialTheme.colorScheme.error)
 }
 
 @Composable
 fun ConceptoTextField(viewModel: GastosViewModel){
     OutlinedTextField(
         value = viewModel.concepto,
-        onValueChange = { viewModel.concepto = it},
+        onValueChange = {
+            viewModel.concepto = it
+            viewModel.msgConcepto = ""
+        },
         label = { Text(text = "Concepto")}
     )
+    Text(text = viewModel.msgConcepto, color = MaterialTheme.colorScheme.error)
 }
 
 @Composable
 fun NcfTextField(viewModel: GastosViewModel){
     OutlinedTextField(
         value = viewModel.ncf,
-        onValueChange = { viewModel.ncf = it},
+        onValueChange = {
+            viewModel.ncf = it
+            viewModel.msgNcf = ""
+        },
         label = { Text(text = "NCF")}
     )
+    Text(text = viewModel.msgNcf, color = MaterialTheme.colorScheme.error)
 }
 
 @Composable
@@ -116,9 +141,13 @@ fun ItbisTextField(viewModel: GastosViewModel){
     OutlinedTextField(
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         value = viewModel.itbis.toString(),
-        onValueChange = { viewModel.itbis = it.toIntOrNull() ?: 0},
+        onValueChange = {
+            viewModel.itbis = it.toIntOrNull() ?: 0
+            viewModel.msgItbis = ""
+        },
         label = { Text(text = "Itbis")}
     )
+    Text(text = viewModel.msgItbis, color = MaterialTheme.colorScheme.error)
 }
 
 @Composable
@@ -126,9 +155,14 @@ fun MontoTextField(viewModel: GastosViewModel){
     OutlinedTextField(
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         value = viewModel.monto.toString(),
-        onValueChange = { viewModel.monto = it.toIntOrNull() ?: 0},
+        onValueChange =
+        {
+            viewModel.monto = it.toIntOrNull() ?: 0
+            viewModel.msgMonto = ""
+        },
         label = { Text(text = "Monto")}
     )
+    Text(text = viewModel.msgMonto, color = MaterialTheme.colorScheme.error)
 }
 @Composable
 fun GastosList(gastos: List<GastoDto>, viewModel: GastosViewModel) {
