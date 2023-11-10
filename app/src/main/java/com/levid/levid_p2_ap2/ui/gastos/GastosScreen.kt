@@ -232,7 +232,7 @@ fun ItemGasto(gasto: GastoDto, viewModel: GastosViewModel){
                 Text(
                     text = "$${gasto.monto}",
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.error
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
