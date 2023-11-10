@@ -39,6 +39,17 @@ class GastosRepository @Inject constructor(
             emit(Resource.Error(e.message ?: "No internet"))
         }
     }
+    suspend fun putGasto(idGasto: Int, nuevoGasto: GastoDto): Flow<Resource<GastoDto>> = flow {
+        try {
+            emit(Resource.Loading())
+            val gasto = gastosApi.putGasto(idGasto, nuevoGasto)
+            emit(Resource.Success(gasto.body()!!))
+        } catch (e: HttpException) {
+            emit(Resource.Error(e.message ?: "Error HTTP"))
+        } catch (e: IOException) {
+            emit(Resource.Error(e.message ?: "No internet"))
+        }
+    }
 
     suspend fun postGasto(gasto: GastoDto) = gastosApi.postGasto(gasto)
     suspend fun deleteGasto(id: Int) = gastosApi.deleteGasto(id)

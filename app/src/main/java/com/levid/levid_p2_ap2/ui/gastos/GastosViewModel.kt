@@ -32,7 +32,31 @@ class GastosViewModel @Inject constructor(
     var itbis by mutableIntStateOf(0)
     var monto by mutableIntStateOf(0)
 
+    private var gastoModificar: GastoDto? = null
+
     fun guardar(){
+        viewModelScope.launch {
+            try{
+                if(gastoModificar != null){
+                    modificar()
+                }
+                else{
+                    insertar()
+                }
+
+            }catch (ex: Exception){
+                _uiState.update { it.copy(error = ex.message ?: "Error") }
+            }
+            insertar()
+        }
+        limpiar()
+    }
+    fun modificar(){
+        viewModelScope.launch {
+            gastosRepository.putGasto(gastoModificar!!.id, gastoModificar!!)
+        }
+    }
+    fun insertar(){
         viewModelScope.launch {
             gastosRepository.postGasto(
                 GastoDto(
@@ -45,7 +69,16 @@ class GastosViewModel @Inject constructor(
                 )
             )
         }
-        limpiar()
+    }
+    fun modificarGasto(gasto: GastoDto) {
+        gastoModificar = gasto
+        // Rellena los inputs con los datos del gasto
+        fecha = gasto.fecha
+        idSuplidor = gasto.idSuplidor
+        concepto = gasto.concepto
+        ncf = gasto.ncf ?: ""
+        itbis = gasto.itbis
+        monto = gasto.monto
     }
     fun delete(id: Int) {
         viewModelScope.launch {

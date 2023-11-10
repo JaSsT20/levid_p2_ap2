@@ -165,11 +165,13 @@ fun ItemGasto(gasto: GastoDto, viewModel: GastosViewModel){
         Row(
             modifier = Modifier.padding(8.dp)
         ){
-            Text(text = "${gasto.suplidor}")
-
+            Text(
+                text = "${gasto.suplidor}",
+                style = MaterialTheme.typography.titleLarge
+            )
         }
         Row(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(horizontal = 8.dp)
         ){
             Text(text = gasto.concepto, overflow = TextOverflow.Ellipsis, maxLines = 2)
         }
@@ -193,7 +195,11 @@ fun ItemGasto(gasto: GastoDto, viewModel: GastosViewModel){
                     .weight(1f)
                     .padding(8.dp)
             ) {
-                Text(text = "$${gasto.monto}", style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text = "$${gasto.monto}",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.error
+                )
             }
         }
         Divider(thickness = 2.dp)
@@ -206,7 +212,7 @@ fun ItemGasto(gasto: GastoDto, viewModel: GastosViewModel){
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextButton(
-                    onClick = { /*TODO*/ }
+                    onClick = { viewModel.modificarGasto(gasto) }
                 ) {
                     Icon(imageVector = Icons.Filled.Edit, contentDescription = "Edit icon")
                     Spacer(modifier = Modifier.padding(horizontal = 3.dp))
