@@ -50,6 +50,7 @@ class GastosViewModel @Inject constructor(
             insertar()
         }
         limpiar()
+        cargarDatos()
     }
     fun modificar(){
         viewModelScope.launch {
@@ -93,7 +94,7 @@ class GastosViewModel @Inject constructor(
         itbis = 0
         monto = 0
     }
-    init{
+    fun cargarDatos(){
         viewModelScope.launch {
             gastosRepository.getGastos().collect { result ->
                 when (result) {
@@ -120,5 +121,8 @@ class GastosViewModel @Inject constructor(
                 }
             }
         }
+    }
+    init{
+        cargarDatos()
     }
 }
