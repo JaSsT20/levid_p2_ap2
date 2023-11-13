@@ -100,6 +100,7 @@ class GastosViewModel @Inject constructor(
         }
     }
     fun modificarGasto(gasto: GastoDto) {
+        cargarDatos()
         gastoModificar = gasto
         id = gasto.id
         fecha = gasto.fecha
