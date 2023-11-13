@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.levid.levid_p2_ap2.ui.gastos
 
@@ -14,13 +14,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.levid.levid_p2_ap2.data.remote.dtos.GastoDto
+import com.levid.levid_p2_ap2.data.remote.dtos.SuplidorDto
 
 @Composable
 fun GastosScreen(
@@ -48,20 +51,21 @@ fun GastosScreen(
             .padding(8.dp)
     ) {
         val state = viewModel.uiState.collectAsStateWithLifecycle()
-        Form(viewModel)
+        val suplidoresState = viewModel.suplidoresState.collectAsStateWithLifecycle()
+        Form(viewModel, suplidoresState.value.suplidores)
         GastosList(state.value.gastos, viewModel)
     }
 }
 
 @Composable
-fun Form(viewModel: GastosViewModel) {
+fun Form(viewModel: GastosViewModel, suplidoresState: List<SuplidorDto>){
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SuplidorTextField(viewModel = viewModel)
+        SuplidorTextField(viewModel = viewModel, suplidoresState = suplidoresState)
         FechaTextField(viewModel = viewModel)
         ConceptoTextField(viewModel = viewModel)
         NcfTextField(viewModel = viewModel)
@@ -82,19 +86,41 @@ fun SaveButton(viewModel: GastosViewModel) {
         Text(text = "Guardar")
     }
 }
-
-
 @Composable
-fun SuplidorTextField(viewModel: GastosViewModel){
+fun SuplidorTextField(viewModel: GastosViewModel, suplidoresState: List<SuplidorDto>){
     OutlinedTextField(
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        value = viewModel.idSuplidor.toString(),
+        value = viewModel.suplidor,
         onValueChange = {
                 viewModel.idSuplidor = it.toIntOrNull() ?: 0
                 viewModel.msgIdSuplidor = ""
         },
-        label = { Text(text = "Suplidor")}
+        label = { Text(text = "Suplidor")},
+        trailingIcon = {
+            IconButton(onClick = { viewModel.expandido = true }
+            ) {
+                Icon(imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = "Arrow down icon"
+                )
+            }
+        },
+        readOnly = true
     )
+    DropdownMenu(
+        expanded = viewModel.expandido,
+        onDismissRequest = { viewModel.expandido = false}
+    ) {
+        for(suplidor in suplidoresState){
+            DropdownMenuItem(text = {
+                Text(text = suplidor.nombres )},
+                onClick = {
+                    viewModel.suplidor = suplidor.nombres
+                    viewModel.idSuplidor = suplidor.id
+                    viewModel.expandido = false
+                    viewModel.msgIdSuplidor = ""
+                }
+            )
+        }
+    }
     Text(text = viewModel.msgIdSuplidor, color = MaterialTheme.colorScheme.error)
 }
 
