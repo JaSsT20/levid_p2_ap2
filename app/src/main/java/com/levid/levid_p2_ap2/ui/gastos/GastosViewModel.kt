@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.levid.levid_p2_ap2.data.remote.dtos.GastoDto
 import com.levid.levid_p2_ap2.data.repository.GastosRepository
+import com.levid.levid_p2_ap2.data.repository.SuplidoresRepository
+import com.levid.levid_p2_ap2.ui.suplidores.SuplidoresListState
 import com.levid.levid_p2_ap2.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,13 +21,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GastosViewModel @Inject constructor(
-    private val gastosRepository: GastosRepository
+    private val gastosRepository: GastosRepository,
+    private val suplidoresRepository: SuplidoresRepository
 ): ViewModel() {
     private val _uiState = MutableStateFlow(GastosListState())
     val uiState: StateFlow<GastosListState> = _uiState.asStateFlow()
 
-    val id by mutableIntStateOf(0)
+    private val _uiSupState = MutableStateFlow(SuplidoresListState())
+    var suplidoresState: StateFlow<SuplidoresListState> = _uiSupState.asStateFlow()
+
+    var expandido by mutableStateOf(false)
+
+    var id by mutableIntStateOf(0)
     var idSuplidor by mutableIntStateOf(0)
+    var suplidor by mutableStateOf("")
     var fecha by mutableStateOf("")
     var concepto by mutableStateOf("")
     var ncf by mutableStateOf("")
@@ -63,8 +72,18 @@ class GastosViewModel @Inject constructor(
     }
     fun modificar(){
         viewModelScope.launch {
+            gastoModificar = GastoDto(
+                id = id,
+                fecha = fecha,
+                idSuplidor = idSuplidor,
+                concepto = concepto,
+                ncf = ncf,
+                itbis = itbis,
+                monto = monto
+            )
             gastosRepository.putGasto(gastoModificar!!.id, gastoModificar!!)
         }
+        cargarDatos()
     }
     fun insertar(){
         viewModelScope.launch {
@@ -82,10 +101,12 @@ class GastosViewModel @Inject constructor(
     }
     fun modificarGasto(gasto: GastoDto) {
         gastoModificar = gasto
+        id = gasto.id
         fecha = gasto.fecha
         idSuplidor = gasto.idSuplidor
+        suplidor = gasto.suplidor!!
         concepto = gasto.concepto
-        ncf = gasto.ncf ?: ""
+        ncf = gasto.ncf!!
         itbis = gasto.itbis
         monto = gasto.monto
     }
@@ -96,6 +117,7 @@ class GastosViewModel @Inject constructor(
         cargarDatos()
     }
     fun limpiar(){
+        suplidor = ""
         fecha = ""
         idSuplidor = 0
         concepto = ""
@@ -105,7 +127,7 @@ class GastosViewModel @Inject constructor(
     }
     fun validar(): Boolean {
         if(idSuplidor <= 0){
-            msgIdSuplidor = "El id no puede ser menor o igual a cero."
+            msgIdSuplidor = "Debe seleccionar un suplidor."
             return false
         }
         else if(fecha.isBlank()){
@@ -163,7 +185,39 @@ class GastosViewModel @Inject constructor(
             }
         }
     }
+    fun cargarSuplidores(){
+        viewModelScope.launch {
+            suplidoresRepository.getSuplidores().collect { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        _uiSupState.update { it.copy(isLoading = true) }
+                    }
+
+                    is Resource.Success -> {
+                        _uiSupState.update {
+                            it.copy(
+                                suplidores = result.data ?: emptyList(),
+                                isLoading = false,
+                                error = null
+                            )
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        _uiSupState.update {
+                            it.copy(
+                                error = result.message ?: "Error",
+                                isLoading = false
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     init{
         cargarDatos()
+        cargarSuplidores()
     }
 }

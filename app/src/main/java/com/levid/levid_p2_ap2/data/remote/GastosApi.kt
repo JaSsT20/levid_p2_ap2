@@ -1,6 +1,7 @@
 package com.levid.levid_p2_ap2.data.remote
 
 import com.levid.levid_p2_ap2.data.remote.dtos.GastoDto
+import com.levid.levid_p2_ap2.data.remote.dtos.SuplidorDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -23,4 +24,7 @@ interface GastosApi {
 
     @DELETE("api/Gastos/{id}")
     suspend fun deleteGasto(@Path("id") id: Int): Response<GastoDto>
+
+    @GET("api/SuplidoresGastos")
+    suspend fun getSuplidores(): List<SuplidorDto>
 }
