@@ -32,7 +32,7 @@ class GastosViewModel @Inject constructor(
 
     var expandido by mutableStateOf(false)
 
-    val id by mutableIntStateOf(0)
+    var id by mutableIntStateOf(0)
     var idSuplidor by mutableIntStateOf(0)
     var suplidor by mutableStateOf("")
     var fecha by mutableStateOf("")
@@ -72,8 +72,18 @@ class GastosViewModel @Inject constructor(
     }
     fun modificar(){
         viewModelScope.launch {
+            gastoModificar = GastoDto(
+                id = id,
+                fecha = fecha,
+                idSuplidor = idSuplidor,
+                concepto = concepto,
+                ncf = ncf,
+                itbis = itbis,
+                monto = monto
+            )
             gastosRepository.putGasto(gastoModificar!!.id, gastoModificar!!)
         }
+        cargarDatos()
     }
     fun insertar(){
         viewModelScope.launch {
@@ -91,10 +101,12 @@ class GastosViewModel @Inject constructor(
     }
     fun modificarGasto(gasto: GastoDto) {
         gastoModificar = gasto
+        id = gasto.id
         fecha = gasto.fecha
         idSuplidor = gasto.idSuplidor
+        suplidor = gasto.suplidor!!
         concepto = gasto.concepto
-        ncf = gasto.ncf ?: ""
+        ncf = gasto.ncf!!
         itbis = gasto.itbis
         monto = gasto.monto
     }
@@ -105,6 +117,7 @@ class GastosViewModel @Inject constructor(
         cargarDatos()
     }
     fun limpiar(){
+        suplidor = ""
         fecha = ""
         idSuplidor = 0
         concepto = ""
