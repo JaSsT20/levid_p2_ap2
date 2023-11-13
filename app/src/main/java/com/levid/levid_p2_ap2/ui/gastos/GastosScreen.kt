@@ -3,12 +3,15 @@
 package com.levid.levid_p2_ap2.ui.gastos
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
@@ -106,20 +109,27 @@ fun SuplidorTextField(viewModel: GastosViewModel, suplidoresState: List<Suplidor
         readOnly = true,
         placeholder = { Text(text = "Pulse el icono de allá ------->")}
     )
-    DropdownMenu(
-        expanded = viewModel.expandido,
-        onDismissRequest = { viewModel.expandido = false}
-    ) {
-        for(suplidor in suplidoresState){
-            DropdownMenuItem(text = {
-                Text(text = suplidor.nombres )},
-                onClick = {
-                    viewModel.suplidor = suplidor.nombres
-                    viewModel.idSuplidor = suplidor.id
-                    viewModel.expandido = false
-                    viewModel.msgIdSuplidor = ""
-                }
-            )
+    Box(
+        modifier = Modifier
+            .width(IntrinsicSize.Min).
+            fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ){
+        DropdownMenu(
+            expanded = viewModel.expandido,
+            onDismissRequest = { viewModel.expandido = false},
+        ) {
+            for(suplidor in suplidoresState){
+                DropdownMenuItem(text = {
+                    Text(text = suplidor.nombres )},
+                    onClick = {
+                        viewModel.suplidor = suplidor.nombres
+                        viewModel.idSuplidor = suplidor.id
+                        viewModel.expandido = false
+                        viewModel.msgIdSuplidor = ""
+                    }
+                )
+            }
         }
     }
     Text(text = viewModel.msgIdSuplidor, color = MaterialTheme.colorScheme.error)
