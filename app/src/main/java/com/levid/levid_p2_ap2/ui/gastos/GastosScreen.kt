@@ -103,7 +103,8 @@ fun SuplidorTextField(viewModel: GastosViewModel, suplidoresState: List<Suplidor
                 )
             }
         },
-        readOnly = true
+        readOnly = true,
+        placeholder = { Text(text = "Pulse el icono de allá ------->")}
     )
     DropdownMenu(
         expanded = viewModel.expandido,
