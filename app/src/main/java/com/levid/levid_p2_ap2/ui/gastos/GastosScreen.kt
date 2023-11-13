@@ -41,6 +41,7 @@ import com.levid.levid_p2_ap2.data.remote.dtos.GastoDto
 fun GastosScreen(
     viewModel: GastosViewModel = hiltViewModel()
 ){
+    Text("Levid")
     Column(
         modifier = Modifier
             .fillMaxSize()
