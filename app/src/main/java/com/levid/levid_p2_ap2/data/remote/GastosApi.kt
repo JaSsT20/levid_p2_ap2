@@ -3,9 +3,11 @@ package com.levid.levid_p2_ap2.data.remote
 import com.levid.levid_p2_ap2.data.remote.dtos.GastoDto
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface GastosApi {
     @GET("api/Gastos")
@@ -17,5 +19,8 @@ interface GastosApi {
     suspend fun getGasto(id: Int): GastoDto
 
     @PUT("api/Gastos/{id}")
-    suspend fun putGasto(id: Int, gasto: GastoDto)
+    suspend fun putGasto(@Path("id") id: Int,@Body gasto: GastoDto): Response<GastoDto>
+
+    @DELETE("api/Gastos/{id}")
+    suspend fun deleteGasto(@Path("id") id: Int): Response<GastoDto>
 }

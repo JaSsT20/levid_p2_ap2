@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
 package com.levid.levid_p2_ap2.ui.gastos
 
@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,7 +35,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.levid.levid_p2_ap2.data.remote.dtos.GastoDto
 
 @Composable
@@ -48,14 +48,17 @@ fun GastosScreen(
     ) {
         val state = viewModel.uiState.collectAsStateWithLifecycle()
         Form(viewModel)
-        GastosList(state.value.gastos)
+        GastosList(state.value.gastos, viewModel)
     }
 }
 
 @Composable
 fun Form(viewModel: GastosViewModel) {
     Column(
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SuplidorTextField(viewModel = viewModel)
         FechaTextField(viewModel = viewModel)
@@ -69,7 +72,10 @@ fun Form(viewModel: GastosViewModel) {
 
 @Composable
 fun SaveButton(viewModel: GastosViewModel) {
-    OutlinedButton(onClick = { viewModel.guardar()}) {
+    OutlinedButton(
+        onClick = { viewModel.guardar()},
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = "Add icon")
         Spacer(modifier = Modifier.padding(horizontal = 3.dp))
         Text(text = "Guardar")
@@ -80,37 +86,54 @@ fun SaveButton(viewModel: GastosViewModel) {
 @Composable
 fun SuplidorTextField(viewModel: GastosViewModel){
     OutlinedTextField(
-        value = viewModel.suplidor,
-        onValueChange = { viewModel.suplidor = it},
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        value = viewModel.idSuplidor.toString(),
+        onValueChange = {
+                viewModel.idSuplidor = it.toIntOrNull() ?: 0
+                viewModel.msgIdSuplidor = ""
+        },
         label = { Text(text = "Suplidor")}
     )
+    Text(text = viewModel.msgIdSuplidor, color = MaterialTheme.colorScheme.error)
 }
 
 @Composable
 fun FechaTextField(viewModel: GastosViewModel){
     OutlinedTextField(
         value = viewModel.fecha,
-        onValueChange = { viewModel.fecha = it},
+        onValueChange = {
+            viewModel.fecha = it
+            viewModel.msgFecha = ""
+        },
         label = { Text(text = "Fecha")}
     )
+    Text(text = viewModel.msgFecha, color = MaterialTheme.colorScheme.error)
 }
 
 @Composable
 fun ConceptoTextField(viewModel: GastosViewModel){
     OutlinedTextField(
         value = viewModel.concepto,
-        onValueChange = { viewModel.concepto = it},
+        onValueChange = {
+            viewModel.concepto = it
+            viewModel.msgConcepto = ""
+        },
         label = { Text(text = "Concepto")}
     )
+    Text(text = viewModel.msgConcepto, color = MaterialTheme.colorScheme.error)
 }
 
 @Composable
 fun NcfTextField(viewModel: GastosViewModel){
     OutlinedTextField(
         value = viewModel.ncf,
-        onValueChange = { viewModel.ncf = it},
+        onValueChange = {
+            viewModel.ncf = it
+            viewModel.msgNcf = ""
+        },
         label = { Text(text = "NCF")}
     )
+    Text(text = viewModel.msgNcf, color = MaterialTheme.colorScheme.error)
 }
 
 @Composable
@@ -118,9 +141,13 @@ fun ItbisTextField(viewModel: GastosViewModel){
     OutlinedTextField(
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         value = viewModel.itbis.toString(),
-        onValueChange = { viewModel.itbis = it.toIntOrNull() ?: 0},
+        onValueChange = {
+            viewModel.itbis = it.toIntOrNull() ?: 0
+            viewModel.msgItbis = ""
+        },
         label = { Text(text = "Itbis")}
     )
+    Text(text = viewModel.msgItbis, color = MaterialTheme.colorScheme.error)
 }
 
 @Composable
@@ -128,21 +155,26 @@ fun MontoTextField(viewModel: GastosViewModel){
     OutlinedTextField(
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         value = viewModel.monto.toString(),
-        onValueChange = { viewModel.monto = it.toIntOrNull() ?: 0},
+        onValueChange =
+        {
+            viewModel.monto = it.toIntOrNull() ?: 0
+            viewModel.msgMonto = ""
+        },
         label = { Text(text = "Monto")}
     )
+    Text(text = viewModel.msgMonto, color = MaterialTheme.colorScheme.error)
 }
 @Composable
-fun GastosList(gastos: List<GastoDto>) {
+fun GastosList(gastos: List<GastoDto>, viewModel: GastosViewModel) {
     LazyColumn{
         items(gastos){ gasto ->
-            ItemGasto(gasto = gasto)
+            ItemGasto(gasto = gasto, viewModel = viewModel)
         }
     }
 }
 
 @Composable
-fun ItemGasto(gasto: GastoDto){
+fun ItemGasto(gasto: GastoDto, viewModel: GastosViewModel){
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -167,10 +199,13 @@ fun ItemGasto(gasto: GastoDto){
         Row(
             modifier = Modifier.padding(8.dp)
         ){
-            Text(text = gasto.suplidor!!)
+            Text(
+                text = "${gasto.suplidor}",
+                style = MaterialTheme.typography.titleLarge
+            )
         }
         Row(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(horizontal = 8.dp)
         ){
             Text(text = gasto.concepto, overflow = TextOverflow.Ellipsis, maxLines = 2)
         }
@@ -194,7 +229,11 @@ fun ItemGasto(gasto: GastoDto){
                     .weight(1f)
                     .padding(8.dp)
             ) {
-                Text(text = "$${gasto.monto}", style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text = "$${gasto.monto}",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         }
         Divider(thickness = 2.dp)
@@ -207,7 +246,7 @@ fun ItemGasto(gasto: GastoDto){
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextButton(
-                    onClick = { /*TODO*/ }
+                    onClick = { viewModel.modificarGasto(gasto) }
                 ) {
                     Icon(imageVector = Icons.Filled.Edit, contentDescription = "Edit icon")
                     Spacer(modifier = Modifier.padding(horizontal = 3.dp))
@@ -219,12 +258,15 @@ fun ItemGasto(gasto: GastoDto){
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextButton(
-                    onClick = { /*TODO*/ },
-                    colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colorScheme.error)
+                    onClick = { viewModel.delete(gasto.id) },
                 ) {
-                    Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete icon")
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Delete icon",
+                        tint = MaterialTheme.colorScheme.error
+                    )
                     Spacer(modifier = Modifier.padding(horizontal = 3.dp))
-                    Text(text = "Eliminar")
+                    Text(text = "Eliminar", color = MaterialTheme.colorScheme.error)
                 }
             }
         }
